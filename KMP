@@ -1,0 +1,96 @@
+/*
+Given a text and a pattern, Find whether the pattern exist in the text or not. If it is present print "found" without quotes else print "not found"
+without quotes.
+
+Input:
+
+The first line of input contains an integer T denoting the number of test cases. Each test case consist of a string in 'lowercase' only in a
+separate line.
+
+Output:
+
+Print "found" or "not found" in a separate line.
+
+
+Constraints:
+
+1 ≤ T ≤ 30
+1 ≤ |s| ≤ 100
+*/
+
+class GFG {
+	public static void main (String[] args) {
+	    	    
+		Scanner s = new Scanner(System.in);
+		int numTests=s.nextInt();
+			   
+		for(int i=0; i<numTests; i++){
+		    String text = s.next();
+		    String pattern = s.next();
+		    if(foundPattern(text, pattern)){
+		        System.out.println("found");
+		    } else {
+		         System.out.println("not found");
+		    }
+		}
+	}
+	public static boolean foundPattern(String text, String pattern){
+	    if(pattern.length()>text.length()){
+		        return false;
+		}
+	    int[] lsp = new int[pattern.length()];
+	    char[] patternArr = pattern.toCharArray();
+	    processPattern(lsp, patternArr);
+	    char[] textArr = text.toCharArray();
+	    
+	    int patternIndex=0;
+	    for(int textIndex=0; textIndex<textArr.length; textIndex++){
+	            //Calculate how many letters in the pattern we can skip/ at which letter 
+	            // in the pattern we can start matching in order not to repeat work
+	            
+	            if(patternIndex == patternArr.length){
+	                    return true;
+	            }
+	        
+	            while(textArr[textIndex] != patternArr[patternIndex] && patternIndex>0){
+	               int charsToSkip = lsp[patternIndex-1]; 
+	               patternIndex = charsToSkip; // Start matching at this index in the pattern
+	                                            // instead of from 0 again
+	               
+	               if((patternArr.length - patternIndex) > (textArr.length-textIndex)){
+	                   return false;
+	               }
+	               
+	            }
+	            if(textArr[textIndex] == patternArr[patternIndex]){
+	                patternIndex++;
+	            }
+	            
+	        }
+	        if(patternIndex == patternArr.length){
+	                    return true;
+	        }
+	        return false;
+	}
+	public static void processPattern(int[] lsp, char[] pattern){
+
+	    for(int i=1; i<pattern.length; i++){
+	         
+	        int index = lsp[i-1];
+	        while(pattern[i] != pattern[index] && index > 0){
+	            //Make border smaller by 1
+	            index-=1;
+	            //New index to look at
+	            index = lsp[index];
+	        }
+	        
+	        if(pattern[i] == pattern[index]){
+	            lsp[i]=index+1;
+	           
+	        } else {
+	            lsp[i]=0;
+	             
+	        }
+	    }
+	}
+}
